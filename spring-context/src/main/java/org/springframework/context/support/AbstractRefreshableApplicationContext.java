@@ -119,15 +119,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
-		if (hasBeanFactory()) {
+		if (hasBeanFactory()) {// 如果已经由Bean工厂了就销毁并关闭
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
-			DefaultListableBeanFactory beanFactory = createBeanFactory();
-			beanFactory.setSerializationId(getId());
-			customizeBeanFactory(beanFactory);
-			loadBeanDefinitions(beanFactory);
+			DefaultListableBeanFactory beanFactory = createBeanFactory(); // 这里重新创建工厂
+			beanFactory.setSerializationId(getId()); // 设置工厂序列化ID
+			customizeBeanFactory(beanFactory); // 定制化Bean工厂-设置一些属性值
+			loadBeanDefinitions(beanFactory); // 解析bean配置文件（xml），根据配置文件生成对应的BeanDefinition对象 ****这里非常麻烦****
 			this.beanFactory = beanFactory;
 		}
 		catch (IOException ex) {
@@ -194,7 +194,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
 	 */
 	protected DefaultListableBeanFactory createBeanFactory() {
-		return new DefaultListableBeanFactory(getInternalParentBeanFactory());
+		return new DefaultListableBeanFactory(getInternalParentBeanFactory());// getInternalParentBeanFactory 获取内部父类Bean工厂，现在是空的
 	}
 
 	/**
@@ -211,7 +211,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
-	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) { // 设置bean工厂参数值
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}

@@ -584,14 +584,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); // 解决循环依赖
 		}
 
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			populateBean(beanName, mbd, instanceWrapper);
-			exposedObject = initializeBean(beanName, exposedObject, mbd);
+			populateBean(beanName, mbd, instanceWrapper); // 给bean对象填充属性
+			exposedObject = initializeBean(beanName, exposedObject, mbd);// 设置xxxAware接口属性值（Bean可以实现一些Aware接口区获取Bean工厂的一些属性）
 		}
 		catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -632,7 +632,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Register bean as disposable.
 		try {
-			registerDisposableBeanIfNecessary(beanName, bean, mbd);
+			registerDisposableBeanIfNecessary(beanName, bean, mbd);// 给当前bean增加一个销毁方法，用于工厂关闭时调用销毁当前bean对象
 		}
 		catch (BeanDefinitionValidationException ex) {
 			throw new BeanCreationException(
@@ -1788,11 +1788,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
-			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName); // 初始化前应用后置处理器
 		}
 
 		try {
-			invokeInitMethods(beanName, wrappedBean, mbd);
+			invokeInitMethods(beanName, wrappedBean, mbd); // 执行init-method方法（初始化）
 		}
 		catch (Throwable ex) {
 			throw new BeanCreationException(
@@ -1800,7 +1800,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
-			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName); // 初始化后应用后置处理器
 		}
 
 		return wrappedBean;
