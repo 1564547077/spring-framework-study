@@ -1,6 +1,6 @@
-DROP TABLE person IF EXISTS;
+DROP TABLE bean IF EXISTS;
 
-CREATE TABLE person (
+CREATE TABLE bean (
   name VARCHAR(20) NOT NULL,
   PRIMARY KEY(name)
 );

@@ -4395,7 +4395,7 @@ Thus, marking it for lazy initialization will be ignored, and the
 
 You can use the `PropertySourcesPlaceholderConfigurer` to externalize property values
 from a bean definition in a separate file by using the standard Java `Properties` format.
-Doing so enables the person deploying an application to customize environment-specific
+Doing so enables the bean deploying an application to customize environment-specific
 properties, such as database URLs and passwords, without the complexity or risk of
 modifying the main XML definition file or files for the container.
 

@@ -154,7 +154,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 
 	static {
-		// Eagerly load the ContextClosedEvent class to avoid weird classloader issues
+		// 急切地加载 ContextClosedEvent 类以避免在 WebLogic 8.1 中关闭应用程序时出现奇怪的类加载器问题。 （达斯汀伍兹报道。）
 		// on application shutdown in WebLogic 8.1. (Reported by Dustin Woods.)
 		ContextClosedEvent.class.getName();
 	}
@@ -178,19 +178,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	private ConfigurableEnvironment environment;
 
 	/** BeanFactoryPostProcessors to apply on refresh. */
-	private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
+	private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>(); // 增强或者修改Bean定义信息类的集合
 
 	/** System time in milliseconds when this context started. */
 	private long startupDate;
 
 	/** Flag that indicates whether this context is currently active. */
-	private final AtomicBoolean active = new AtomicBoolean();
+	private final AtomicBoolean active = new AtomicBoolean(); // 当前容器激活或关闭状态标志位
 
 	/** Flag that indicates whether this context has been closed already. */
 	private final AtomicBoolean closed = new AtomicBoolean();
 
 	/** Synchronization monitor for the "refresh" and "destroy". */
-	private final Object startupShutdownMonitor = new Object();
+	private final Object startupShutdownMonitor = new Object(); // 刷新和销毁的锁
 
 	/** Reference to the JVM shutdown hook, if registered. */
 	@Nullable
@@ -227,7 +227,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Create a new AbstractApplicationContext with no parent.
 	 */
 	public AbstractApplicationContext() {
-		this.resourcePatternResolver = getResourcePatternResolver();
+		this.resourcePatternResolver = getResourcePatternResolver(); // 用来解析系统运行时要用的资源，比如哪些配置文件
 	}
 
 	/**
@@ -525,40 +525,40 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 * 4. 获取Environment对象，并加载当前系统的属性值到Environment对象中
 			 * 5. 准备监听器和事件的集合对象，默认为空的集合
 			* */
-			prepareRefresh();// 刷新前准备工作
+			prepareRefresh();// 刷新前准备工作 初始化一些必备数据，对核心不重要
 
 			// 通知子类刷新内部bean工厂（子类实现了这个方法，创建bean工厂），创建容器对象DefaultListableBeanFactory，加载xml配置文件的属性值到当前工厂中、最重要的就是BeanDefinition
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); // 1.重要点
 
-			// Prepare the bean factory for use in this context.
+			// 准备 bean 工厂以在此上下文中使用。
 			prepareBeanFactory(beanFactory); // 为了完成bean工厂的某些初始化操作，设置一些属性值，增强器之类的
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory);
+				// 允许在上下文子类中对 bean 工厂进行后处理。
+				postProcessBeanFactory(beanFactory); // BeanFactor的前后置操作的一些初始化和注册
 
-				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory); // 实例化并执行所有已经注册的BeanFactoryPostProcessors
+				// 调用在上下文中注册为 bean 的工厂处理器。 这里会调用一个后置处理器，用来增强@Configuration注解修饰的类，主要是为了防止@Bean方法内调用另一个@Bean方法导致bean对象被重复实例化
+				invokeBeanFactoryPostProcessors(beanFactory); // BeanFactor的前后置操作的一些初始化和注册， 实例化并执行所有已经注册的BeanFactoryPostProcessors
 
-				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory); // 实例化并注册BeanPostProcessor，上面是BeanFactory这边是Bean不一样
+				// 注册拦截 bean 创建的 bean 处理器。
+				registerBeanPostProcessors(beanFactory);// 这里实际上就是一些功能，比如自动注入会用到两个后置处理器就会在这里进行注册
 
-				// Initialize message source for this context.
+				// 为此上下文初始化消息源。
 				initMessageSource(); // 初始化消息资源，国际化操作
 
-				// Initialize event multicaster for this context.
+				// 为此上下文初始化事件多播器。
 				initApplicationEventMulticaster(); // 初始化应用程序事件广播器
 
-				// Initialize other special beans in specific context subclasses.
+				// 初始化特定上下文子类中的其他特殊 bean。
 				onRefresh(); // 留给子类进行拓展工作,SpringBoot源码里面有实现启动了Tomcat容器
 
-				// Check for listener beans and register them.
+				// 检查侦听器 bean 并注册它们。
 				registerListeners(); // 注册监听器
 
-				// Instantiate all remaining (non-lazy-init) singletons.
-				finishBeanFactoryInitialization(beanFactory); // 实例化剩下的所有非懒加载的单例对象
+				// 实例化所有剩余的（非惰性初始化）单例。
+				finishBeanFactoryInitialization(beanFactory); // 3.重要点 实例化剩下的所有非懒加载的单例对象
 
-				// Last step: publish corresponding event.
+				// 最后一步：发布相应的事件。
 				finishRefresh();
 			}
 
@@ -712,7 +712,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors()); // 这里面对javaConfig类进行增强（但是没有实例化）
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
 		// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
@@ -887,14 +887,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.preInstantiateSingletons(); // 初始化所有剩下的非懒加载单例对象
 	}
 
-	int a;
-	public void test() {
-		// 编译器没有异常
-		System.out.println(a);
-		int b;
-		// 编译器异常
-		System.out.println(b);
-	}
 
 	/**
 	 * Finish the refresh of this context, invoking the LifecycleProcessor's

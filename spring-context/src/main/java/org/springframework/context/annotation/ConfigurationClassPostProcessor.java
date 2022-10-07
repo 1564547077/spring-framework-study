@@ -255,7 +255,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
 
-		enhanceConfigurationClasses(beanFactory);
+		enhanceConfigurationClasses(beanFactory);// 对配置类进行增强（增强并替换原有配置类的BeanDefinition将里面的Class换成增强过的代理类的Class）
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
 
@@ -426,9 +426,9 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer();
 		for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
 			AbstractBeanDefinition beanDef = entry.getValue();
-			// If a @Configuration class gets proxied, always proxy the target class
+			// 如果 @Configuration 类被代理，总是代理目标类
 			beanDef.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
-			// Set enhanced subclass of the user-specified bean class
+			// 设置用户指定bean类的增强子类
 			Class<?> configClass = beanDef.getBeanClass();
 			Class<?> enhancedClass = enhancer.enhance(configClass, this.beanClassLoader);
 			if (configClass != enhancedClass) {

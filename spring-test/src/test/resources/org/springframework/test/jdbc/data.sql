@@ -1,1 +1,1 @@
-INSERT INTO person VALUES('bob');
+INSERT INTO bean VALUES('bob');

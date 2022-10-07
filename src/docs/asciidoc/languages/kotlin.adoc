@@ -321,7 +321,7 @@ idiomatic Kotlin API and to allow better discoverability (no usage of static met
 [source,kotlin,indent=0]
 ----
 val mockMvc: MockMvc = ...
-mockMvc.get("/person/{name}", "Lee") {
+mockMvc.get("/bean/{name}", "Lee") {
 	secure = true
 	accept = APPLICATION_JSON
 	headers {
@@ -619,7 +619,7 @@ For Kotlin `Flow`, a  `Flow<T>.transactional` extension is provided.
             // SELECT SQL statement
         }
 
-        private suspend fun updatePerson(person: Person): Person {
+        private suspend fun updatePerson(bean: Person): Person {
             // UPDATE SQL statement
         }
     }

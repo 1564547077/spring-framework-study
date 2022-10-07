@@ -1502,7 +1502,7 @@ The following example has type and method level mappings:
 
 		@PostMapping
 		@ResponseStatus(HttpStatus.CREATED)
-		public void add(@RequestBody Person person) {
+		public void add(@RequestBody Person bean) {
 			// ...
 		}
 	}
@@ -1521,7 +1521,7 @@ The following example has type and method level mappings:
 
 		@PostMapping
 		@ResponseStatus(HttpStatus.CREATED)
-		fun add(@RequestBody person: Person) {
+		fun add(@RequestBody bean: Person) {
 			// ...
 		}
 	}
@@ -1682,10 +1682,10 @@ See <<mvc-config-path-matching>> in the configuration section.
 ==== Suffix Match
 
 By default, Spring MVC performs `.{asterisk}` suffix pattern matching so that a
-controller mapped to `/person` is also implicitly mapped to `/person.{asterisk}`.
+controller mapped to `/bean` is also implicitly mapped to `/bean.{asterisk}`.
 The file extension is then used to interpret the requested content type to use for
-the response (that is, instead of the `Accept` header) -- for example, `/person.pdf`,
-`/person.xml`, and others.
+the response (that is, instead of the `Accept` header) -- for example, `/bean.pdf`,
+`/bean.xml`, and others.
 
 Using file extensions in this way was necessary when browsers used to send `Accept` headers
 that were hard to interpret consistently. At present, that is no longer a necessity and

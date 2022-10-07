@@ -394,9 +394,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
-		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
+		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs); // 这个对象里面有当前bean对象所有需要自动注入的属性列表
 		try {
-			metadata.inject(bean, beanName, pvs);
+			metadata.inject(bean, beanName, pvs); // 在这里使用反射注入属性
 		}
 		catch (BeanCreationException ex) {
 			throw ex;
@@ -637,11 +637,11 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				}
 			}
 			else {
-				value = resolveFieldValue(field, bean, beanName);
+				value = resolveFieldValue(field, bean, beanName); // 拿到要注入的实例或数据
 			}
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
-				field.set(bean, value);
+				field.set(bean, value); // 自动注入 反射注入值
 			}
 		}
 

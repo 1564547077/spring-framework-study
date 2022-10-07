@@ -139,7 +139,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);// 调用父类构造方法，进行相关对象创建等操作
-		setConfigLocations(configLocations);// 设置配置路径（就是bean配置文件路径）
+		setConfigLocations(configLocations);// 设置配置路径（就是bean配置文件路径）,这里会把配置文件名里面的占位符替换成环境变量对应的值（如果有占位符的话${username}）
 		if (refresh) {
 			refresh();
 		}

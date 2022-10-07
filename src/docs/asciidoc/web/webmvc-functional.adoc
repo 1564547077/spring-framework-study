@@ -41,9 +41,9 @@ as the following example shows:
 	PersonHandler handler = new PersonHandler(repository);
 
 	RouterFunction<ServerResponse> route = route()
-		.GET("/person/{id}", accept(APPLICATION_JSON), handler::getPerson)
-		.GET("/person", accept(APPLICATION_JSON), handler::listPeople)
-		.POST("/person", handler::createPerson)
+		.GET("/bean/{id}", accept(APPLICATION_JSON), handler::getPerson)
+		.GET("/bean", accept(APPLICATION_JSON), handler::listPeople)
+		.POST("/bean", handler::createPerson)
 		.build();
 
 
@@ -75,10 +75,10 @@ as the following example shows:
 
 	val route = router { // <1>
 		accept(APPLICATION_JSON).nest {
-			GET("/person/{id}", handler::getPerson)
-			GET("/person", handler::listPeople)
+			GET("/bean/{id}", handler::getPerson)
+			GET("/bean", handler::listPeople)
 		}
-		POST("/person", handler::createPerson)
+		POST("/bean", handler::createPerson)
 	}
 
 
@@ -175,14 +175,14 @@ content:
 [source,java,role="primary"]
 .Java
 ----
-Person person = ...
-ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(person);
+Person bean = ...
+ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(bean);
 ----
 [source,kotlin,role="secondary"]
 .Kotlin
 ----
-val person: Person = ...
-ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(person)
+val bean: Person = ...
+ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(bean)
 ----
 
 The following example shows how to build a 201 (CREATED) response with a `Location` header and no body:
@@ -245,16 +245,16 @@ public class PersonHandler {
 	}
 
 	public ServerResponse createPerson(ServerRequest request) throws Exception { // <2>
-		Person person = request.body(Person.class);
-		repository.savePerson(person);
+		Person bean = request.body(Person.class);
+		repository.savePerson(bean);
 		return ok().build();
 	}
 
 	public ServerResponse getPerson(ServerRequest request) { // <3>
 		int personId = Integer.parseInt(request.pathVariable("id"));
-		Person person = repository.getPerson(personId);
-		if (person != null) {
-			return ok().contentType(APPLICATION_JSON).body(person);
+		Person bean = repository.getPerson(personId);
+		if (bean != null) {
+			return ok().contentType(APPLICATION_JSON).body(bean);
 		}
 		else {
 			return ServerResponse.notFound().build();
@@ -266,7 +266,7 @@ public class PersonHandler {
 <1> `listPeople` is a handler function that returns all `Person` objects found in the repository as
 JSON.
 <2> `createPerson` is a handler function that stores a new `Person` contained in the request body.
-<3> `getPerson` is a handler function that returns a single person, identified by the `id` path
+<3> `getPerson` is a handler function that returns a single bean, identified by the `id` path
 variable. We retrieve that `Person` from the repository and create a JSON response, if it is
 found. If it is not found, we return a 404 Not Found response.
 
@@ -281,8 +281,8 @@ found. If it is not found, we return a 404 Not Found response.
 		}
 
 		fun createPerson(request: ServerRequest): ServerResponse { // <2>
-			val person = request.body<Person>()
-			repository.savePerson(person)
+			val bean = request.body<Person>()
+			repository.savePerson(bean)
 			return ok().build()
 		}
 
@@ -297,7 +297,7 @@ found. If it is not found, we return a 404 Not Found response.
 <1> `listPeople` is a handler function that returns all `Person` objects found in the repository as
 JSON.
 <2> `createPerson` is a handler function that stores a new `Person` contained in the request body.
-<3> `getPerson` is a handler function that returns a single person, identified by the `id` path
+<3> `getPerson` is a handler function that returns a single bean, identified by the `id` path
 variable. We retrieve that `Person` from the repository and create a JSON response, if it is
 found. If it is not found, we return a 404 Not Found response.
 
@@ -319,15 +319,15 @@ apply validation to the request body. For example, given a custom Spring
 		// ...
 
 		public ServerResponse createPerson(ServerRequest request) {
-			Person person = request.body(Person.class);
-			validate(person); // <2>
-			repository.savePerson(person);
+			Person bean = request.body(Person.class);
+			validate(bean); // <2>
+			repository.savePerson(bean);
 			return ok().build();
 		}
 
-		private void validate(Person person) {
-			Errors errors = new BeanPropertyBindingResult(person, "person");
-			validator.validate(person, errors);
+		private void validate(Person bean) {
+			Errors errors = new BeanPropertyBindingResult(bean, "bean");
+			validator.validate(bean, errors);
 			if (errors.hasErrors()) {
 				throw new ServerWebInputException(errors.toString()); // <3>
 			}
@@ -348,15 +348,15 @@ apply validation to the request body. For example, given a custom Spring
 		// ...
 
 		fun createPerson(request: ServerRequest): ServerResponse {
-			val person = request.body<Person>()
-			validate(person) // <2>
-			repository.savePerson(person)
+			val bean = request.body<Person>()
+			validate(bean) // <2>
+			repository.savePerson(bean)
 			return ok().build()
 		}
 
-		private fun validate(person: Person) {
-			val errors: Errors = BeanPropertyBindingResult(person, "person")
-			validator.validate(person, errors)
+		private fun validate(bean: Person) {
+			val errors: Errors = BeanPropertyBindingResult(bean, "bean")
+			validator.validate(bean, errors)
 			if (errors.hasErrors()) {
 				throw ServerWebInputException(errors.toString()) // <3>
 			}
@@ -469,17 +469,17 @@ The following example shows the composition of four routes:
 	RouterFunction<ServerResponse> otherRoute = ...
 
 	RouterFunction<ServerResponse> route = route()
-		.GET("/person/{id}", accept(APPLICATION_JSON), handler::getPerson) // <1>
-		.GET("/person", accept(APPLICATION_JSON), handler::listPeople) // <2>
-		.POST("/person", handler::createPerson) // <3>
+		.GET("/bean/{id}", accept(APPLICATION_JSON), handler::getPerson) // <1>
+		.GET("/bean", accept(APPLICATION_JSON), handler::listPeople) // <2>
+		.POST("/bean", handler::createPerson) // <3>
 		.add(otherRoute) // <4>
 		.build();
 ----
-<1> pass:q[`GET /person/{id}`] with an `Accept` header that matches JSON is routed to
+<1> pass:q[`GET /bean/{id}`] with an `Accept` header that matches JSON is routed to
 `PersonHandler.getPerson`
-<2> `GET /person` with an `Accept` header that matches JSON is routed to
+<2> `GET /bean` with an `Accept` header that matches JSON is routed to
 `PersonHandler.listPeople`
-<3> `POST /person` with no additional predicates is mapped to
+<3> `POST /bean` with no additional predicates is mapped to
 `PersonHandler.createPerson`, and
 <4> `otherRoute` is a router function that is created elsewhere, and added to the route built.
 
@@ -495,16 +495,16 @@ The following example shows the composition of four routes:
 	val otherRoute = router {  }
 
 	val route = router {
-		GET("/person/{id}", accept(APPLICATION_JSON), handler::getPerson) // <1>
-		GET("/person", accept(APPLICATION_JSON), handler::listPeople) // <2>
-		POST("/person", handler::createPerson) // <3>
+		GET("/bean/{id}", accept(APPLICATION_JSON), handler::getPerson) // <1>
+		GET("/bean", accept(APPLICATION_JSON), handler::listPeople) // <2>
+		POST("/bean", handler::createPerson) // <3>
 	}.and(otherRoute) // <4>
 ----
-<1> pass:q[`GET /person/{id}`] with an `Accept` header that matches JSON is routed to
+<1> pass:q[`GET /bean/{id}`] with an `Accept` header that matches JSON is routed to
 `PersonHandler.getPerson`
-<2> `GET /person` with an `Accept` header that matches JSON is routed to
+<2> `GET /bean` with an `Accept` header that matches JSON is routed to
 `PersonHandler.listPeople`
-<3> `POST /person` with no additional predicates is mapped to
+<3> `POST /bean` with no additional predicates is mapped to
 `PersonHandler.createPerson`, and
 <4> `otherRoute` is a router function that is created elsewhere, and added to the route built.
 
@@ -513,10 +513,10 @@ The following example shows the composition of four routes:
 
 It is common for a group of router functions to have a shared predicate, for instance a shared
 path.
-In the example above, the shared predicate would be a path predicate that matches `/person`,
+In the example above, the shared predicate would be a path predicate that matches `/bean`,
 used by three of the routes.
 When using annotations, you would remove this duplication by using a type-level `@RequestMapping`
- annotation that maps to `/person`.
+ annotation that maps to `/bean`.
 In WebMvc.fn, path predicates can be shared through the `path` method on the router function builder.
 For instance, the last few lines of the example above can be improved in the following way by using nested routes:
 
@@ -524,10 +524,10 @@ For instance, the last few lines of the example above can be improved in the fol
 .Java
 ----
 RouterFunction<ServerResponse> route = route()
-	.path("/person", builder -> builder // <1>
+	.path("/bean", builder -> builder // <1>
 		.GET("/{id}", accept(APPLICATION_JSON), handler::getPerson)
 		.GET("", accept(APPLICATION_JSON), handler::listPeople)
-		.POST("/person", handler::createPerson))
+		.POST("/bean", handler::createPerson))
 	.build();
 ----
 <1> Note that second parameter of `path` is a consumer that takes the router builder.
@@ -538,10 +538,10 @@ RouterFunction<ServerResponse> route = route()
 	import org.springframework.web.servlet.function.router
 
 	val route = router {
-		"/person".nest {
+		"/bean".nest {
 			GET("/{id}", accept(APPLICATION_JSON), handler::getPerson)
 			GET("", accept(APPLICATION_JSON), handler::listPeople)
-			POST("/person", handler::createPerson)
+			POST("/bean", handler::createPerson)
 		}
 	}
 ----
@@ -555,11 +555,11 @@ We can further improve by using the `nest` method together with `accept`:
 .Java
 ----
 	RouterFunction<ServerResponse> route = route()
-		.path("/person", b1 -> b1
+		.path("/bean", b1 -> b1
 			.nest(accept(APPLICATION_JSON), b2 -> b2
 				.GET("/{id}", handler::getPerson)
 				.GET("", handler::listPeople))
-			.POST("/person", handler::createPerson))
+			.POST("/bean", handler::createPerson))
 		.build();
 ----
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
@@ -568,11 +568,11 @@ We can further improve by using the `nest` method together with `accept`:
 	import org.springframework.web.servlet.function.router
 
 	val route = router {
-		"/person".nest {
+		"/bean".nest {
 			accept(APPLICATION_JSON).nest {
 				GET("/{id}", handler::getPerson)
 				GET("", handler::listPeople)
-				POST("/person", handler::createPerson)
+				POST("/bean", handler::createPerson)
 			}
 		}
 	}
@@ -687,14 +687,14 @@ For instance, consider the following example:
 .Java
 ----
 	RouterFunction<ServerResponse> route = route()
-		.path("/person", b1 -> b1
+		.path("/bean", b1 -> b1
 			.nest(accept(APPLICATION_JSON), b2 -> b2
 				.GET("/{id}", handler::getPerson)
 				.GET("", handler::listPeople)
 				.before(request -> ServerRequest.from(request) // <1>
 					.header("X-RequestHeader", "Value")
 					.build()))
-			.POST("/person", handler::createPerson))
+			.POST("/bean", handler::createPerson))
 		.after((request, response) -> logResponse(response)) // <2>
 		.build();
 ----
@@ -707,7 +707,7 @@ For instance, consider the following example:
 	import org.springframework.web.servlet.function.router
 
 	val route = router {
-		"/person".nest {
+		"/bean".nest {
 			GET("/{id}", handler::getPerson)
 			GET("", handler::listPeople)
 			before { // <1>
@@ -715,7 +715,7 @@ For instance, consider the following example:
 						.header("X-RequestHeader", "Value").build()
 			}
 		}
-		POST("/person", handler::createPerson)
+		POST("/bean", handler::createPerson)
 		after { _, response -> // <2>
 			logResponse(response)
 		}
@@ -741,11 +741,11 @@ The following example shows how to do so:
 	SecurityManager securityManager = ...
 
 	RouterFunction<ServerResponse> route = route()
-		.path("/person", b1 -> b1
+		.path("/bean", b1 -> b1
 			.nest(accept(APPLICATION_JSON), b2 -> b2
 				.GET("/{id}", handler::getPerson)
 				.GET("", handler::listPeople))
-			.POST("/person", handler::createPerson))
+			.POST("/bean", handler::createPerson))
 		.filter((request, next) -> {
 			if (securityManager.allowAccessTo(request.path())) {
 				return next.handle(request);
@@ -764,10 +764,10 @@ The following example shows how to do so:
 	val securityManager: SecurityManager = ...
 
 	val route = router {
-		("/person" and accept(APPLICATION_JSON)).nest {
+		("/bean" and accept(APPLICATION_JSON)).nest {
 			GET("/{id}", handler::getPerson)
 			GET("", handler::listPeople)
-			POST("/person", handler::createPerson)
+			POST("/bean", handler::createPerson)
 			filter { request, next ->
 				if (securityManager.allowAccessTo(request.path())) {
 					next(request)

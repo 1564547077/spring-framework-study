@@ -1086,7 +1086,7 @@ content with the help of an `HttpMessageConverter`.
 On a POST, an input object is serialized to the request body, as the following example shows:
 
 ----
-URI location = template.postForLocation("https://example.com/people", person);
+URI location = template.postForLocation("https://example.com/people", bean);
 ----
 
 You need not explicitly set the Content-Type header of the request. In most cases,
@@ -1098,7 +1098,7 @@ turn, influences what message converter is selected.
 On a GET, the body of the response is deserialized to an output `Object`, as the following example shows:
 
 ----
-Person person = restTemplate.getForObject("https://example.com/people/{id}", Person.class, 42);
+Person bean = restTemplate.getForObject("https://example.com/people/{id}", Person.class, 42);
 ----
 
 The `Accept` header of the request does not need to be explicitly set. In most cases,
@@ -5283,7 +5283,7 @@ to an instance of the `Person` class:
 		public PersonMappingOperation(ConnectionFactory connectionFactory) {
 			setConnectionFactory(connectionFactory);
 			CciInteractionSpec interactionSpec = new CciConnectionSpec();
-			interactionSpec.setSql("select * from person where person_id=?");
+			interactionSpec.setSql("select * from bean where person_id=?");
 			setInteractionSpec(interactionSpec);
 		}
 
@@ -5298,21 +5298,21 @@ to an instance of the `Person` class:
 		protected Object extractOutputData(Record outputRecord)
 				throws ResourceException, SQLException {
 			ResultSet rs = (ResultSet) outputRecord;
-			Person person = null;
+			Person bean = null;
 			if (rs.next()) {
-				Person person = new Person();
-				person.setId(rs.getInt("person_id"));
-				person.setLastName(rs.getString("person_last_name"));
-				person.setFirstName(rs.getString("person_first_name"));
+				Person bean = new Person();
+				bean.setId(rs.getInt("person_id"));
+				bean.setLastName(rs.getString("person_last_name"));
+				bean.setFirstName(rs.getString("person_first_name"));
 			}
-			return person;
+			return bean;
 		}
 	}
 ----
 
-Then the application can execute the operation object, with the person identifier as an
+Then the application can execute the operation object, with the bean identifier as an
 argument. Note that you could set up the operation object as a shared instance, as it is
-thread-safe. The following executes the operation object with the person identifier as an
+thread-safe. The following executes the operation object with the bean identifier as an
 argument:
 
 [source,java,indent=0]
@@ -5322,8 +5322,8 @@ argument:
 
 		public Person getPerson(int id) {
 			PersonMappingOperation query = new PersonMappingOperation(getConnectionFactory());
-			Person person = (Person) query.execute(new Integer(id));
-			return person;
+			Person bean = (Person) query.execute(new Integer(id));
+			return bean;
 		}
 	}
 ----

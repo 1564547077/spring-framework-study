@@ -34,21 +34,21 @@
 	<bean id="decorateWithAttribute" class="org.springframework.beans.testfixture.beans.TestBean" test:object-name="foo"/>
 
 	<util:list id="list.of.things">
-		<test:person name="Fiona Apple" age="20"/>
-		<test:person name="Harriet Wheeler" age="30"/>
+		<test:bean name="Fiona Apple" age="20"/>
+		<test:bean name="Harriet Wheeler" age="30"/>
 	</util:list>
 
 	<util:set id="set.of.things">
-		<test:person name="Fiona Apple" age="20"/>
-		<test:person name="Harriet Wheeler" age="30"/>
+		<test:bean name="Fiona Apple" age="20"/>
+		<test:bean name="Harriet Wheeler" age="30"/>
 	</util:set>
 
 	<util:map id="map.of.things">
 		<entry key="fiona.apple">
-			<test:person name="Fiona Apple" age="20"/>
+			<test:bean name="Fiona Apple" age="20"/>
 		</entry>
 		<entry key="harriet.wheeler">
-			<test:person name="Harriet Wheeler" age="30"/>
+			<test:bean name="Harriet Wheeler" age="30"/>
 		</entry>
 	</util:map>
 

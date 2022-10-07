@@ -136,7 +136,7 @@ public class PropertyPlaceholderHelper {
 
 		StringBuilder result = new StringBuilder(value);
 		while (startIndex != -1) {
-			int endIndex = findPlaceholderEndIndex(result, startIndex);
+			int endIndex = findPlaceholderEndIndex(result, startIndex); // 这里是为了找到当前占位符的结束索引，spring-${asd-${cad}-a}这种"{asd"的{对应的是"a}"的这个}索引位置
 			if (endIndex != -1) {
 				String placeholder = result.substring(startIndex + this.placeholderPrefix.length(), endIndex);
 				String originalPlaceholder = placeholder;
@@ -148,9 +148,9 @@ public class PropertyPlaceholderHelper {
 							"Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
 				}
 				// Recursive invocation, parsing placeholders contained in the placeholder key.
-				placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders);
+				placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders); // 这里递归调用当前方法，为了能够解析spring-${userbane-${age}}.xml 这种里面还有个age的情况
 				// Now obtain the value for the fully resolved key...
-				String propVal = placeholderResolver.resolvePlaceholder(placeholder);
+				String propVal = placeholderResolver.resolvePlaceholder(placeholder); // 这里拿到占位符在环境变量里面对应的值
 				if (propVal == null && this.valueSeparator != null) {
 					int separatorIndex = placeholder.indexOf(this.valueSeparator);
 					if (separatorIndex != -1) {
@@ -166,7 +166,7 @@ public class PropertyPlaceholderHelper {
 					// Recursive invocation, parsing placeholders contained in the
 					// previously resolved placeholder value.
 					propVal = parseStringValue(propVal, placeholderResolver, visitedPlaceholders);
-					result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal);
+					result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal); // 将配置值，替换占位符 也就是 spring-${username}.xml -> spring-wlj15.xml
 					if (logger.isTraceEnabled()) {
 						logger.trace("Resolved placeholder '" + placeholder + "'");
 					}

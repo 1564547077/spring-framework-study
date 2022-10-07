@@ -570,24 +570,24 @@ as the following example shows:
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
-	Person person = ... ;
+	Person bean = ... ;
 
 	Mono<Void> result = client.post()
 			.uri("/persons/{id}", id)
 			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(person)
+			.bodyValue(bean)
 			.retrieve()
 			.bodyToMono(Void.class);
 ----
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
 .Kotlin
 ----
-	val person: Person = ...
+	val bean: Person = ...
 
 	client.post()
 			.uri("/persons/{id}", id)
 			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(person)
+			.bodyValue(bean)
 			.retrieve()
 			.awaitBody<Unit>()
 ----
@@ -874,7 +874,7 @@ index 0:
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
-	Person person = client.get().uri("/person/{id}", i).retrieve()
+	Person bean = client.get().uri("/bean/{id}", i).retrieve()
 		.bodyToMono(Person.class)
 		.block();
 
@@ -886,8 +886,8 @@ index 0:
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
 .Kotlin
 ----
-	val person = runBlocking {
-		client.get().uri("/person/{id}", i).retrieve()
+	val bean = runBlocking {
+		client.get().uri("/bean/{id}", i).retrieve()
 				.awaitBody<Person>()
 	}
 	
@@ -904,15 +904,15 @@ response individually, and instead wait for the combined result:
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
-	Mono<Person> personMono = client.get().uri("/person/{id}", personId)
+	Mono<Person> personMono = client.get().uri("/bean/{id}", personId)
 			.retrieve().bodyToMono(Person.class);
 
-	Mono<List<Hobby>> hobbiesMono = client.get().uri("/person/{id}/hobbies", personId)
+	Mono<List<Hobby>> hobbiesMono = client.get().uri("/bean/{id}/hobbies", personId)
 			.retrieve().bodyToFlux(Hobby.class).collectList();
 
-	Map<String, Object> data = Mono.zip(personMono, hobbiesMono, (person, hobbies) -> {
+	Map<String, Object> data = Mono.zip(personMono, hobbiesMono, (bean, hobbies) -> {
 				Map<String, String> map = new LinkedHashMap<>();
-				map.put("person", person);
+				map.put("bean", bean);
 				map.put("hobbies", hobbies);
 				return map;
 			})
@@ -923,16 +923,16 @@ response individually, and instead wait for the combined result:
 ----
 	val data = runBlocking {
 			val personDeferred = async {
-				client.get().uri("/person/{id}", personId)
+				client.get().uri("/bean/{id}", personId)
 						.retrieve().awaitBody<Person>()
 			}
 
 			val hobbiesDeferred = async {
-				client.get().uri("/person/{id}/hobbies", personId)
+				client.get().uri("/bean/{id}/hobbies", personId)
 						.retrieve().bodyToFlow<Hobby>().toList()
 			}
 
-			mapOf("person" to personDeferred.await(), "hobbies" to hobbiesDeferred.await())
+			mapOf("bean" to personDeferred.await(), "hobbies" to hobbiesDeferred.await())
 		}
 ----
 

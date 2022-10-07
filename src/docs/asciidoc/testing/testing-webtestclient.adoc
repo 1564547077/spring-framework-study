@@ -209,7 +209,7 @@ Then you can use built-in assertions for the body. The following example shows o
 	client.get().uri("/persons")
 			.exchange()
 			.expectStatus().isOk()
-			.expectBodyList(Person.class).hasSize(3).contains(person);
+			.expectBodyList(Person.class).hasSize(3).contains(bean);
 ----
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
 .Kotlin
@@ -219,7 +219,7 @@ Then you can use built-in assertions for the body. The following example shows o
 	client.get().uri("/persons")
 			.exchange()
 			.expectStatus().isOk()
-			.expectBodyList<Person>().hasSize(3).contains(person)
+			.expectBodyList<Person>().hasSize(3).contains(bean)
 ----
 
 You can also go beyond the built-in assertions and create your own, as the following example shows:
@@ -317,7 +317,7 @@ Alternatively, if you want to assert there is no response content, you can use c
 .Kotlin
 ----
 	client.post().uri("/persons")
-			.bodyValue(person)
+			.bodyValue(bean)
 			.exchange()
 			.expectStatus().isCreated()
 			.expectBody().isEmpty()
@@ -414,7 +414,7 @@ from the `reactor-test` module to do that, as the following example shows:
 	Flux<Event> eventFlux = result.getResponseBody();
 
 	StepVerifier.create(eventFlux)
-			.expectNext(person)
+			.expectNext(bean)
 			.expectNextCount(4)
 			.consumeNextWith(p -> ...)
 			.thenCancel()
@@ -426,7 +426,7 @@ from the `reactor-test` module to do that, as the following example shows:
 	val eventFlux = result.getResponseBody()
 
 	StepVerifier.create(eventFlux)
-			.expectNext(person)
+			.expectNext(bean)
 			.expectNextCount(4)
 			.consumeNextWith { p -> ... }
 			.thenCancel()

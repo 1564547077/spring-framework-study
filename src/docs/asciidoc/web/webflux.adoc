@@ -1370,7 +1370,7 @@ The following example uses type and method level mappings:
 
 		@PostMapping
 		@ResponseStatus(HttpStatus.CREATED)
-		public void add(@RequestBody Person person) {
+		public void add(@RequestBody Person bean) {
 			// ...
 		}
 	}
@@ -1389,7 +1389,7 @@ The following example uses type and method level mappings:
 
 		@PostMapping
 		@ResponseStatus(HttpStatus.CREATED)
-		fun add(@RequestBody person: Person) {
+		fun add(@RequestBody bean: Person) {
 			// ...
 		}
 	}
@@ -1534,7 +1534,7 @@ Both classes are located in `spring-web` and are expressly designed for use with
 paths in web applications where a large number of URI path patterns are matched at runtime.
 
 Spring WebFlux does not support suffix pattern matching -- unlike Spring MVC, where a
-mapping such as `/person` also matches to `/person.{asterisk}`. For URL-based content
+mapping such as `/bean` also matches to `/bean.{asterisk}`. For URL-based content
 negotiation, if needed, we recommend using a query parameter, which is simpler, more
 explicit, and less vulnerable to URL path based exploits.
 

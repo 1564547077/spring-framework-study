@@ -6997,7 +6997,7 @@ The following test asserts that binding or validation failed:
 ----
 	mockMvc.perform(post("/persons"))
 		.andExpect(status().isOk())
-		.andExpect(model().attributeHasErrors("person"));
+		.andExpect(model().attributeHasErrors("bean"));
 ----
 
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
@@ -7008,7 +7008,7 @@ The following test asserts that binding or validation failed:
 	mockMvc.post("/persons").andExpect {
 		status().isOk()
 		model {
-			attributeHasErrors("person")
+			attributeHasErrors("bean")
 		}
 	}
 ----
@@ -7023,7 +7023,7 @@ request. You can do so as follows, where `print()` is a static import from
 	mockMvc.perform(post("/persons"))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(model().attributeHasErrors("person"));
+		.andExpect(model().attributeHasErrors("bean"));
 ----
 
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
@@ -7036,7 +7036,7 @@ request. You can do so as follows, where `print()` is a static import from
 		}.andExpect {
 			status().isOk()
 			model {
-				attributeHasErrors("person")
+				attributeHasErrors("bean")
 			}
 		}
 ----
@@ -7120,7 +7120,7 @@ resulting links by using XPath expressions:
 ----
 	Map<String, String> ns = Collections.singletonMap("ns", "http://www.w3.org/2005/Atom");
 	mockMvc.perform(get("/handle").accept(MediaType.APPLICATION_XML))
-		.andExpect(xpath("/person/ns:link[@rel='self']/@href", ns).string("http://localhost:8080/people"));
+		.andExpect(xpath("/bean/ns:link[@rel='self']/@href", ns).string("http://localhost:8080/people"));
 ----
 
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
@@ -7130,7 +7130,7 @@ resulting links by using XPath expressions:
 	mockMvc.get("/handle") {
 		accept(MediaType.APPLICATION_XML)
 	}.andExpect {
-		xpath("/person/ns:link[@rel='self']/@href", ns) {
+		xpath("/bean/ns:link[@rel='self']/@href", ns) {
 			string("http://localhost:8080/people")
 		}
 	}
